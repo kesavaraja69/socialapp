@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:socialmedia/core/notifiers/cache_provider.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   User? _user;
-
+  final CacheNotifier cacheNotifier = CacheNotifier();
   User? get user => _user;
   String get userId => _user?.uid ?? "";
+  String get userName => _user?.displayName ?? "";
   bool get isLoggedIn => _user != null;
 
   AuthProvider() {
@@ -29,7 +32,6 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
       _user = cred.user;
-
       await _firestore.collection('users').doc(_user!.uid).set({
         'userId': _user!.uid,
         'name': name,
@@ -37,11 +39,54 @@ class AuthProvider with ChangeNotifier {
         'profilePic': '',
         'createdAt': FieldValue.serverTimestamp(),
       });
+      await cacheNotifier.writeCache(key: 'isLoggedIn', value: 'true');
+      await cacheNotifier.writeCache(key: 'uid', value: _user!.uid);
+      await cacheNotifier.writeCache(
+        key: 'username',
+        value: cred.additionalUserInfo!.username.toString(),
+      );
+      await FirebaseMessaging.instance.subscribeToTopic("allUsers");
       notifyListeners();
       return "success";
     } catch (e) {
       return e.toString();
     }
+  }
+
+  Future<String?> getUserName() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        if (userDoc.exists) {
+          return userDoc['name'];
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching username: $e");
+    }
+    return null;
+  }
+
+  Future<String?> getUserID() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        if (userDoc.exists) {
+          return userDoc['userId'];
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching userID: $e");
+    }
+    return null;
   }
 
   Future<String> login({
@@ -55,6 +100,9 @@ class AuthProvider with ChangeNotifier {
       );
 
       _user = cred.user;
+      await cacheNotifier.writeCache(key: 'isLoggedIn', value: 'true');
+      await cacheNotifier.writeCache(key: 'uid', value: _user!.uid);
+      await FirebaseMessaging.instance.subscribeToTopic("allUsers");
       notifyListeners();
       return "success";
     }

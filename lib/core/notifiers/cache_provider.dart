@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CacheNotifier extends ChangeNotifier {
+  String? isLoggedIn;
+
+  Future<void> checkLoginStatus() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    isLoggedIn = prefs.getString('isLoggedIn');
+    notifyListeners();
+  }
+
   Future readCache({required String key}) async {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:socialmedia/app/constants/constants.dart';
 import 'package:socialmedia/app/routes/app_route.dart';
 import 'package:socialmedia/core/notifiers/auth_provider.dart';
-import 'package:socialmedia/meta/screens/auth/login/login_screen.dart';
 import 'package:socialmedia/meta/widgets/custom_button.dart';
 import 'package:socialmedia/meta/widgets/custom_snackbar.dart';
 import 'package:socialmedia/meta/widgets/custom_textfield.dart';
@@ -126,9 +125,9 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                  AppRoutes.loginRoute,
+                  (route) => false,
                 ),
                 child: const Text(
                   "Already have an account? Login here",

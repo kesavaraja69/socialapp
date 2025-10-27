@@ -50,7 +50,7 @@ class CustomButton extends StatelessWidget {
                   gradientColors ??
                   [
                     const Color.fromARGB(255, 255, 99, 9),
-                    const Color.fromARGB(255, 255, 9, 9).withOpacity(0.4),
+                    const Color.fromARGB(255, 255, 9, 9).withValues(alpha: 0.4),
                   ],
             ),
           ),

@@ -28,7 +28,7 @@ class Core extends StatelessWidget {
     return MaterialApp(
       title: 'Social Media',
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.loginRoute,
+      initialRoute: AppRoutes.splashRoute,
       routes: AppRoutes.routes,
 
       // theme: ThemeData(

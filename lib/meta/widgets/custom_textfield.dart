@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:socialmedia/app/constants/constants.dart';
 
 class CustomTextField extends StatelessWidget {
-  final IconData icon;
   final String hintText;
   final bool isPassword;
   final bool isEmail;
+  final int maxLines;
   final FormFieldValidator<String>? validator;
   final TextEditingController controller;
   final ValueNotifier<bool> _obscureNotifier = ValueNotifier<bool>(true);
-
+  final IconData? icon;
   CustomTextField({
     super.key,
-    required this.icon,
+    this.icon,
     required this.hintText,
-    required this.validator,
+    this.validator,
     this.isPassword = false,
     this.isEmail = false,
+    this.maxLines = 1,
     required this.controller,
   });
 
@@ -41,17 +42,21 @@ class CustomTextField extends StatelessWidget {
             builder: (context, obscure, _) {
               return TextFormField(
                 style: TextStyle(
-                  color: Colors.white.withOpacity(.8),
+                  color: Colors.white.withValues(alpha: .8),
                   fontSize: 17,
                 ),
                 controller: controller,
                 obscureText: isPassword ? obscure : false,
                 validator: validator,
+                maxLines: maxLines,
+
                 keyboardType: isEmail
                     ? TextInputType.emailAddress
                     : TextInputType.text,
                 decoration: InputDecoration(
-                  prefixIcon: Icon(icon, color: Colors.white.withOpacity(.7)),
+                  prefixIcon: icon != null
+                      ? Icon(icon, color: Colors.white.withValues(alpha: .7))
+                      : null,
                   suffixIcon: isPassword
                       ? IconButton(
                           onPressed: () {
@@ -59,7 +64,7 @@ class CustomTextField extends StatelessWidget {
                           },
                           icon: Icon(
                             obscure ? Icons.visibility_off : Icons.visibility,
-                            color: Colors.white.withOpacity(.5),
+                            color: Colors.white.withValues(alpha: .5),
                           ),
                         )
                       : const SizedBox(),
@@ -73,7 +78,7 @@ class CustomTextField extends StatelessWidget {
                       192,
                       192,
                       193,
-                    ).withOpacity(.7),
+                    ).withValues(alpha: .7),
                   ),
                   errorStyle: const TextStyle(
                     height: 0.6,
