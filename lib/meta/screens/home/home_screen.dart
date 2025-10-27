@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:socialmedia/app/constants/constants.dart';
 import 'package:socialmedia/app/routes/app_route.dart';
 import 'package:socialmedia/core/notifiers/auth_provider.dart';
@@ -341,6 +342,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                       ],
+                                    ),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        await Share.share(
+                                          ' Check out this : \n Content : ${p.content} \n Social Media ',
+                                          subject: 'New Post Alert!',
+                                        );
+                                      },
+                                      child: Icon(
+                                        Icons.share,
+                                        color: CColors.white,
+                                      ),
                                     ),
                                   ],
                                 ),
